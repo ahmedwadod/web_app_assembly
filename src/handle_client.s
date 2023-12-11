@@ -37,19 +37,27 @@ _recv_loop:
 	je _end
 	
 	# Process the data
-	push rax
+
+	# Make it null terminated
+	push rax # Push data length to stack
 	add rax, OFFSET data
 	movb [rax], 0
 
+	# Validate request
+	sub rax, OFFSET data
+	mov rdi, rax
+	mov rax, OFFSET data
+	call validate_request
+	cmp rax, 0
+	jne _bad_request
+
+	# Print request
 	mov rax, OFFSET data
 	call print
+	
 
-	mov rdi, [rsp + 8]
-	mov rsi, OFFSET data
-	mov rdx, [rsp]
-	mov rax, 0x01
-	syscall
 
+	# Remove the data length from stack
 	pop rax
 	jmp _recv_loop
 
@@ -58,6 +66,12 @@ _end:
 	pop rdi
 	ret
 
+_bad_request:
+	mov rax, OFFSET bad_req_msg
+	call print
+	pop rax
+	jmp _end
+
 .section .data
 data:
 	.skip 256
@@ -65,4 +79,7 @@ data:
 .section .rodata
 msg: .string "Client Connected\n"
 
-welc: .string "Welcome"
+bad_req_msg:
+	.string "Bad Request\n"
+good_req_msg:
+	.string "Valid Request\n"
