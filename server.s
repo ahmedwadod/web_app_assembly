@@ -7,6 +7,8 @@
 .extern print
 .extern create_server
 .extern close
+.extern accept
+.extern handle_client
 
 _start:
 	# Main Server
@@ -19,12 +21,17 @@ _start:
 	mov rax, OFFSET tcp_success_msg
 	call print
 
+	# Server Loop
+_server_loop:
+	mov rax, [rsp]
+	mov rdi, OFFSET handle_client
+	call accept
+	jmp _server_loop
 
 	# Close the socket fd
 	mov rax, [rsp]
 	call close
 	call exit
-
 
 .section .rodata
 

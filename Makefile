@@ -1,7 +1,7 @@
 # Uncomment to allow debugging
 # DEBUG=1
 LDFLAGS := -nostdlib --static
-src_asm := $(wildcard src/**/*.s)
+src_asm := $(wildcard src/**/*.s) $(wildcard src/*.s)
 src := $(patsubst %.s, %.o, $(src_asm))
 
 default: build
