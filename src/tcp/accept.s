@@ -17,7 +17,7 @@ ACCEPT=0x2b
 .global accept
 accept:
 	nop
-	push rdi
+	push rdi # Push the function pointer
 	# Accept
 	mov rdi, rax
 	mov rsi, OFFSET in_addr
@@ -25,14 +25,19 @@ accept:
 	mov rax, ACCEPT
 	syscall
 
+	# Get the IP and store it in rdi
 	mov rsi, OFFSET in_addr_ip
 	movsxd rdx, [rsi]
 	mov rdi, rdx
-	mov rdx, [rsp]
+
+	pop rdx # Get function pointer from stack
+	push rax # Push client_fd to the stack
+
+	# Call the handleClient (rax: client_fd, rdi: ip, rdx: the pointer)
 	call rdx
 
-	pop rax
-	call close
+	pop rax # Get the client_fd from stack
+	call close 
 	ret
 
 

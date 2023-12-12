@@ -3,7 +3,7 @@
 .section .text
 
 .extern print
-.extern malloc
+.extern malloc_priv
 .extern free
 
 RECV=0x2d
@@ -28,7 +28,7 @@ handle_client:
 
 	# Allocate memory
 	mov rax, REQ_MAX_LEN + 1
-	call malloc
+	call malloc_priv
 	push rax
 
 _recv_loop:
