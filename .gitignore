@@ -2,3 +2,4 @@ server
 *.o
 src/*.o
 src/**/*.o
+dist/
